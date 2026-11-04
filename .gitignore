@@ -1,0 +1,21 @@
+# Build output
+build/
+*.zip
+*.dmg
+
+# Swift / Xcode
+.build/
+DerivedData/
+*.xcodeproj/xcuserdata/
+*.xcworkspace/xcuserdata/
+.swiftpm/
+
+# macOS
+.DS_Store
+._*
+
+# Editors
+.vscode/
+.claude/
+.idea/
+*.swp
