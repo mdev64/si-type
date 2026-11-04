@@ -1,0 +1,5 @@
+CFBundleName = "SiType";
+CFBundleDisplayName = "SiType";
+com.sitype.inputmethod.SiType = "SiType";
+com.sitype.inputmethod.SiType.Phonetic = "SiType - Phonetic";
+com.sitype.inputmethod.SiType.Wijesekara = "SiType - Wijesekara";

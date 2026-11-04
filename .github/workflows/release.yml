@@ -1,0 +1,143 @@
+name: Release & Update Tap
+
+on:
+  push:
+    tags:
+      - "v[0-9]+.[0-9]+.[0-9]+*" # Matches v1.0.0, v1.0.1-rc1, etc.
+
+permissions:
+  contents: write # Grants permissions to create the release and upload assets
+
+jobs:
+  build-and-release:
+    runs-on: macos-15 # Full Xcode, so both arm64 and x86_64 Swift runtimes are available
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set Version
+        id: version
+        run: |
+          # Extract tag from GITHUB_REF (e.g., refs/tags/v1.0.1 -> v1.0.1)
+          TAG="${GITHUB_REF#refs/tags/}"
+          echo "tag=${TAG}" >> "$GITHUB_OUTPUT"
+          echo "version=${TAG#v}" >> "$GITHUB_OUTPUT"
+
+      - name: Build Universal App
+        env:
+          ARCHS: "arm64 x86_64"
+          VERSION: ${{ steps.version.outputs.version }}
+        run: ./build.sh
+
+      - name: Run Tests
+        run: ./Tests/run.sh
+
+      - name: Package App & Calculate Checksum
+        id: package
+        run: |
+          TAG="${{ steps.version.outputs.tag }}"
+          ASSET_NAME="SiType-${TAG}.zip"
+
+          # ditto keeps the bundle structure and code signature intact
+          ditto -c -k --keepParent build/SiType.app "$ASSET_NAME"
+
+          # Calculate SHA-256 hash
+          HASH=$(shasum -a 256 "$ASSET_NAME" | cut -d ' ' -f 1)
+
+          # Disk image for manual installs (drag SiType.app into ~/Library/Input Methods)
+          DMG_NAME="SiType-${TAG}.dmg"
+          DMG_SRC="build/dmg"
+          rm -rf "$DMG_SRC"
+          mkdir -p "$DMG_SRC"
+          ditto build/SiType.app "$DMG_SRC/SiType.app"
+          hdiutil create -volname "SiType ${TAG}" -srcfolder "$DMG_SRC" \
+            -ov -format UDZO "$DMG_NAME"
+          rm -rf "$DMG_SRC"
+
+          # Verify the DMG: mounts cleanly, app signature intact, universal binary
+          hdiutil verify "$DMG_NAME"
+          MNT=$(mktemp -d)
+          hdiutil attach "$DMG_NAME" -nobrowse -readonly -mountpoint "$MNT"
+          codesign --verify --deep --strict --verbose=2 "$MNT/SiType.app"
+          for arch in arm64 x86_64; do
+            lipo "$MNT/SiType.app/Contents/MacOS/SiType" -verify_arch "$arch"
+          done
+          hdiutil detach "$MNT"
+
+          # Export variables for downstream steps
+          echo "asset_name=${ASSET_NAME}" >> "$GITHUB_OUTPUT"
+          echo "dmg_name=${DMG_NAME}" >> "$GITHUB_OUTPUT"
+          echo "sha256=${HASH}" >> "$GITHUB_OUTPUT"
+
+      - name: Create or Update GitHub Release & Upload Asset
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TAG="${{ steps.version.outputs.tag }}"
+          ASSET="${{ steps.package.outputs.asset_name }}"
+          DMG="${{ steps.package.outputs.dmg_name }}"
+
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release upload "$TAG" "$ASSET" "$DMG" --clobber
+          else
+            gh release create "$TAG" "$ASSET" "$DMG" \
+              --title "SiType $TAG" \
+              --generate-notes
+          fi
+
+      - name: Checkout Tap Repository
+        uses: actions/checkout@v4
+        with:
+          repository: "mdev64/homebrew-tap"
+          token: ${{ secrets.TAP_GITHUB_TOKEN }}
+          path: "homebrew-tap"
+
+      - name: Update Cask in Tap
+        run: |
+          cd homebrew-tap
+          mkdir -p Casks
+
+          cat <<EOF > Casks/si-type.rb
+          cask "si-type" do
+            version "${{ steps.version.outputs.version }}"
+            sha256 "${{ steps.package.outputs.sha256 }}"
+
+            url "https://github.com/mdev64/si-type/releases/download/v#{version}/SiType-v#{version}.zip"
+            name "SiType"
+            desc "Sinhala Phonetic (Singlish) and Wijesekara input method"
+            homepage "https://github.com/mdev64/si-type"
+
+            depends_on macos: ">= :big_sur"
+
+            input_method "SiType.app"
+
+            postflight do
+              app = "#{Dir.home}/Library/Input Methods/SiType.app"
+              # The app is ad-hoc signed, not notarized: clear quarantine so macOS will load it.
+              system_command "/usr/bin/xattr", args: ["-dr", "com.apple.quarantine", app]
+              system_command "#{app}/Contents/MacOS/SiType", args: ["--register"]
+            end
+
+            uninstall quit: "com.sitype.inputmethod.SiType"
+
+            zap trash: "~/Library/Preferences/com.sitype.inputmethod.SiType.plist"
+
+            caveats <<~EOS
+              Enable SiType in System Settings → Keyboard → Input Sources → Edit → + → Sinhala.
+              If it does not appear, log out and back in.
+            EOS
+          end
+          EOF
+
+      - name: Commit and Push to Tap
+        run: |
+          cd homebrew-tap
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add Casks/si-type.rb
+          if git diff --cached --quiet; then
+            echo "Cask already up to date"
+            exit 0
+          fi
+          git commit -m "chore(release): bump si-type to ${{ steps.version.outputs.version }}"
+          git push origin main
