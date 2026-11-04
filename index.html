@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SiType — Sinhala input for macOS</title>
+  <meta name="description" content="SiType is a free Sinhala input method for macOS with Phonetic (Singlish) and Wijesekara layouts.">
+  <link rel="icon" type="image/png" href="icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+Sinhala:wght@400;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="nav">
+    <div class="container nav-inner">
+      <a class="brand" href="#top"><img src="icon.png" alt="" width="28" height="28"> SiType</a>
+      <nav class="nav-links">
+        <a href="#demo">Try it</a>
+        <a href="#features">Features</a>
+        <a href="#install">Install</a>
+        <a href="#cheatsheet">Cheat sheet</a>
+        <a class="gh" href="https://github.com/mdev64/si-type">GitHub</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="top">
+    <section class="hero">
+      <div class="container hero-inner">
+        <img class="hero-icon" src="icon.png" alt="SiType icon" width="112" height="112">
+        <h1>Type Sinhala on your Mac,<br> <span class="accent">the way you already type.</span></h1>
+        <p class="lead">SiType is a free, open-source Sinhala input method for macOS. Write in Singlish and watch it become <span class="si">සිංහල</span>, or use the standard Wijesekara layout.</p>
+        <div class="cta">
+          <div class="cmd">
+            <code>brew install --cask mdev64/tap/si-type</code>
+            <button class="copy" data-copy="brew install --cask mdev64/tap/si-type" aria-label="Copy command">Copy</button>
+          </div>
+          <a class="btn" href="https://github.com/mdev64/si-type/releases/latest">Download</a>
+        </div>
+        <p class="meta">macOS 11 Big Sur or later · Apple Silicon &amp; Intel</p>
+      </div>
+    </section>
+
+    <section id="demo" class="section">
+      <div class="container">
+        <h2>Try it out</h2>
+        <p class="sub">This demo uses SiType's actual keymaps. Pick a layout and start typing.</p>
+        <div class="tabs layout-switch" role="tablist" aria-label="Keyboard layout">
+          <button class="tab active" role="tab" aria-selected="true" data-layout="phonetic">Phonetic</button>
+          <button class="tab" role="tab" aria-selected="false" data-layout="wijesekara">Wijesekara</button>
+        </div>
+        <p class="layout-hint" id="layout-hint"></p>
+        <div class="demo">
+          <label class="demo-pane">
+            <span class="pane-label">You type</span>
+            <textarea id="demo-input" spellcheck="false" autocomplete="off" autocapitalize="off" autocorrect="off" rows="4"></textarea>
+          </label>
+          <div class="demo-pane">
+            <span class="pane-label">You get</span>
+            <output id="demo-output" class="si" for="demo-input"></output>
+          </div>
+        </div>
+        <div class="chips" id="demo-examples" aria-label="Examples"></div>
+        <div class="keyboard" id="keyboard" hidden></div>
+      </div>
+    </section>
+
+    <section id="features" class="section alt">
+      <div class="container">
+        <h2>Features</h2>
+        <p class="sub">Two layouts, one small native app.</p>
+        <div class="grid">
+          <article class="card">
+            <div class="card-icon si">අ</div>
+            <h3>Phonetic (Singlish)</h3>
+            <p>Type <code>ammaa</code> and get <span class="si">අම්මා</span>. Your word stays underlined while you compose it.</p>
+          </article>
+          <article class="card">
+            <div class="card-icon"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M7 14h10"/></svg></div>
+            <h3>Wijesekara</h3>
+            <p>The standard SLS 1134 typewriter layout, for touch typists who already know it.</p>
+          </article>
+          <article class="card">
+            <div class="card-icon"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 8 6 6"/><path d="m4 14 6-6 2-3"/><path d="M2 5h12"/><path d="M7 2h1"/><path d="m22 22-5-10-5 10"/><path d="M14 18h6"/></svg></div>
+            <h3>Inline English</h3>
+            <p>Start a word with <code>?</code> to keep it in English until the next space, in both layouts. Handy for names, emails and links.</p>
+          </article>
+          <article class="card">
+            <div class="card-icon"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg></div>
+            <h3>Native &amp; lightweight</h3>
+            <p>Written in Swift with InputMethodKit. Works in every Mac app, with no accounts and no tracking.</p>
+          </article>
+        </div>
+
+        <div class="table-wrap">
+          <table class="english-table">
+            <thead><tr><th>You type</th><th>You get</th></tr></thead>
+            <tbody>
+              <tr><td><code>mama ?hello yanawaa</code></td><td class="si">මම hello යනවා</td></tr>
+              <tr><td><code>?user@mail.com hari</code></td><td class="si">user@mail.com හරි</td></tr>
+              <tr><td><code>kohomadha?</code></td><td class="si">කොහොමද?</td></tr>
+              <tr><td><code>??</code></td><td><code>?</code></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section id="install" class="section">
+      <div class="container">
+        <h2>Install</h2>
+        <p class="sub">Pick one of three ways, then enable SiType in System Settings.</p>
+        <div class="tabs" role="tablist">
+          <button class="tab active" role="tab" aria-selected="true" data-tab="brew">Homebrew</button>
+          <button class="tab" role="tab" aria-selected="false" data-tab="download">Download</button>
+          <button class="tab" role="tab" aria-selected="false" data-tab="source">From source</button>
+        </div>
+
+        <div class="tab-panel active" id="tab-brew" role="tabpanel">
+          <p>The recommended way. Updates come with <code>brew upgrade</code>.</p>
+          <div class="cmd block"><code>brew install --cask mdev64/tap/si-type</code><button class="copy" data-copy="brew install --cask mdev64/tap/si-type">Copy</button></div>
+        </div>
+
+        <div class="tab-panel" id="tab-download" role="tabpanel">
+          <ol>
+            <li>Download <code>SiType-vX.Y.Z.zip</code> from the <a href="https://github.com/mdev64/si-type/releases">Releases page</a> and unzip it.</li>
+            <li>Move <code>SiType.app</code> into <code>~/Library/Input Methods/</code>.</li>
+            <li>The app isn't notarized, so clear the quarantine flag and register it:</li>
+          </ol>
+          <div class="cmd block"><code>xattr -dr com.apple.quarantine ~/Library/Input\ Methods/SiType.app</code><button class="copy" data-copy="xattr -dr com.apple.quarantine ~/Library/Input\ Methods/SiType.app">Copy</button></div>
+          <div class="cmd block"><code>~/Library/Input\ Methods/SiType.app/Contents/MacOS/SiType --register</code><button class="copy" data-copy="~/Library/Input\ Methods/SiType.app/Contents/MacOS/SiType --register">Copy</button></div>
+        </div>
+
+        <div class="tab-panel" id="tab-source" role="tabpanel">
+          <p>Needs the Xcode Command Line Tools (<code>xcode-select --install</code>).</p>
+          <div class="cmd block"><code>git clone https://github.com/mdev64/si-type.git &amp;&amp; cd si-type &amp;&amp; ./install.sh</code><button class="copy" data-copy="git clone https://github.com/mdev64/si-type.git && cd si-type && ./install.sh">Copy</button></div>
+        </div>
+
+        <h3 class="steps-title">Then turn it on</h3>
+        <ol class="steps">
+          <li><span class="step-num">1</span><p>Open <strong>System Settings → Keyboard → Input Sources → Edit…</strong></p></li>
+          <li><span class="step-num">2</span><p>Click <strong>+</strong>, choose <strong>Sinhala</strong>, and add <strong>SiType - Phonetic</strong> and/or <strong>SiType - Wijesekara</strong>.</p></li>
+          <li><span class="step-num">3</span><p>Switch input sources from the menu bar, or with <kbd>Control</kbd>+<kbd>Space</kbd> or the 🌐 key.</p></li>
+        </ol>
+        <p class="note">Not in the list? Log out and back in.</p>
+      </div>
+    </section>
+
+    <section id="cheatsheet" class="section alt">
+      <div class="container">
+        <h2>Phonetic cheat sheet</h2>
+        <p class="sub">Add a vowel after a consonant for its vowel sign: <code>ka</code> <span class="si">ක</span>, <code>kaa</code> <span class="si">කා</span>, <code>ki</code> <span class="si">කි</span>, <code>ku</code> <span class="si">කු</span>, <code>ke</code> <span class="si">කෙ</span>, <code>ko</code> <span class="si">කො</span>.</p>
+        <h3>Vowels</h3>
+        <div class="keys" id="vowels"></div>
+        <h3>Consonants</h3>
+        <div class="keys" id="consonants"></div>
+        <h3>Combinations</h3>
+        <div class="keys" id="combos"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-inner">
+      <p>SiType is open source on <a href="https://github.com/mdev64/si-type">GitHub</a>.</p>
+    </div>
+  </footer>
+
+  <script src="keymap.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
