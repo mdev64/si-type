@@ -63,7 +63,7 @@ final class SiTypeInputController: IMKInputController {
     // MARK: - Text input
 
     override func inputText(_ string: String!, client sender: Any!) -> Bool {
-        guard let string, let client = sender as? IMKTextInput else { return false }
+        guard let string, !string.isEmpty, let client = sender as? IMKTextInput else { return false }
 
         let wasWordStart = atWordStart
         atWordStart = string.allSatisfy(\.isWhitespace)
@@ -75,39 +75,27 @@ final class SiTypeInputController: IMKInputController {
 
     /// Normal Sinhala composition for one key.
     private func compose(_ string: String, client: IMKTextInput) -> Bool {
-        let entry = keymap.lookup(string)
+        let extended = buffer + string
+        let entry = keymap.lookup(extended)
+        let canExtend = keymap.canExtend(extended)
 
-        if buffer.isEmpty {
-            guard let entry else { return false }
-            if entry.commitsImmediately {
-                client.insertText(entry.withoutCommitMarker, replacementRange: Self.notFound)
-            } else {
-                buffer = string
-                showMarked(entry, client: client)
-            }
+        if let entry, entry.commitsImmediately, !canExtend {
+            client.insertText(entry.withoutCommitMarker, replacementRange: Self.notFound)
+            buffer = ""
             return true
         }
-
-        let extended = buffer + string
-        if let extendedValue = keymap.lookup(extended) {
-            // The longer sequence is still a valid key: keep composing.
+        if entry != nil || canExtend {
+            // The sequence is a key, or on the way to one: keep composing.
             buffer = extended
-            showMarked(extendedValue, client: client)
+            showMarked(currentValue, client: client)
             return true
         }
 
         // The sequence can't grow further: commit what we have, then start over.
+        guard !buffer.isEmpty else { return false }
         client.insertText(currentValue, replacementRange: Self.notFound)
         buffer = ""
-
-        guard let entry else { return false }
-        if entry.commitsImmediately {
-            client.insertText(entry.withoutCommitMarker, replacementRange: Self.notFound)
-        } else {
-            buffer = string
-            showMarked(entry, client: client)
-        }
-        return true
+        return compose(string, client: client)
     }
 
     /// Handles the "?" English-passthrough feature.
@@ -194,7 +182,7 @@ final class SiTypeInputController: IMKInputController {
 
     /// The Sinhala text for the current buffer, or the raw keys if it has no mapping.
     private var currentValue: String {
-        (keymap.lookup(buffer) ?? buffer).withoutCommitMarker
+        keymap.render(buffer)
     }
 
     private func showMarked(_ value: String, client: IMKTextInput) {

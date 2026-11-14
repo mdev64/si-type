@@ -4,7 +4,11 @@
 <dict>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
+	<key>CFBundleDisplayName</key>
+	<string>SiType</string>
 	<key>CFBundleExecutable</key>
+	<string>SiType</string>
+	<key>CFBundleIconFile</key>
 	<string>SiType</string>
 	<key>CFBundleIdentifier</key>
 	<string>com.sitype.inputmethod.SiType</string>
@@ -12,32 +16,12 @@
 	<string>6.0</string>
 	<key>CFBundleName</key>
 	<string>SiType</string>
-	<key>CFBundleDisplayName</key>
-	<string>SiType</string>
-	<key>CFBundleIconFile</key>
-	<string>SiType</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.0</string>
+	<string>1.0.1</string>
 	<key>CFBundleVersion</key>
-	<string>1</string>
-	<key>LSMinimumSystemVersion</key>
-	<string>11.0</string>
-	<key>LSBackgroundOnly</key>
-	<true/>
-	<key>NSPrincipalClass</key>
-	<string>NSApplication</string>
-	<key>InputMethodConnectionName</key>
-	<string>SiType_Connection</string>
-	<key>InputMethodServerControllerClass</key>
-	<string>SiTypeInputController</string>
-	<key>tsInputMethodIconFileKey</key>
-	<string>sitype.tiff</string>
-	<key>tsInputMethodCharacterRepertoireKey</key>
-	<array>
-		<string>Sinh</string>
-	</array>
+	<string>1.0.1</string>
 	<key>ComponentInputModeDict</key>
 	<dict>
 		<key>tsInputModeListKey</key>
@@ -50,14 +34,14 @@
 				<string>si</string>
 				<key>tsInputModeAlternateMenuIconFileKey</key>
 				<string>sitype.tiff</string>
-				<key>tsInputModeMenuIconFileKey</key>
-				<string>sitype.tiff</string>
-				<key>tsInputModePaletteIconFileKey</key>
-				<string>sitype.tiff</string>
 				<key>tsInputModeDefaultStateKey</key>
 				<true/>
 				<key>tsInputModeIsVisibleKey</key>
 				<true/>
+				<key>tsInputModeMenuIconFileKey</key>
+				<string>sitype.tiff</string>
+				<key>tsInputModePaletteIconFileKey</key>
+				<string>sitype.tiff</string>
 				<key>tsInputModePrimaryInScriptKey</key>
 				<true/>
 				<key>tsInputModeScriptKey</key>
@@ -71,14 +55,14 @@
 				<string>si</string>
 				<key>tsInputModeAlternateMenuIconFileKey</key>
 				<string>sitype.tiff</string>
-				<key>tsInputModeMenuIconFileKey</key>
-				<string>sitype.tiff</string>
-				<key>tsInputModePaletteIconFileKey</key>
-				<string>sitype.tiff</string>
 				<key>tsInputModeDefaultStateKey</key>
 				<true/>
 				<key>tsInputModeIsVisibleKey</key>
 				<true/>
+				<key>tsInputModeMenuIconFileKey</key>
+				<string>sitype.tiff</string>
+				<key>tsInputModePaletteIconFileKey</key>
+				<string>sitype.tiff</string>
 				<key>tsInputModePrimaryInScriptKey</key>
 				<false/>
 				<key>tsInputModeScriptKey</key>
@@ -91,5 +75,21 @@
 			<string>com.sitype.inputmethod.SiType.Wijesekara</string>
 		</array>
 	</dict>
+	<key>InputMethodConnectionName</key>
+	<string>SiType_Connection</string>
+	<key>InputMethodServerControllerClass</key>
+	<string>SiTypeInputController</string>
+	<key>LSBackgroundOnly</key>
+	<true/>
+	<key>LSMinimumSystemVersion</key>
+	<string>11.0</string>
+	<key>NSPrincipalClass</key>
+	<string>NSApplication</string>
+	<key>tsInputMethodCharacterRepertoireKey</key>
+	<array>
+		<string>Sinh</string>
+	</array>
+	<key>tsInputMethodIconFileKey</key>
+	<string>sitype.tiff</string>
 </dict>
 </plist>
